@@ -34,14 +34,14 @@ class MIPServerPlacer(ServerPlacer):
     def place_server(self, base_station_num, edge_server_num):
         logging.info("{0}:Start running MIP with N={1}, K={2}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                                                                       base_station_num, edge_server_num))
-        self.n = base_station_num
+        self.n = base_station_num if base_station_num <= len(self.base_stations) else len(self.base_stations)
         self.k = edge_server_num
 
         self.preprocess_problem()
 
         c = cplex.Cplex()
 
-        c.parameters.mip.limits.nodes.set(5000)
+        # c.parameters.mip.limits.nodes.set(50000)
 
         self.setup_problem(c)
 

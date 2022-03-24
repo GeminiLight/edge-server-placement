@@ -1,10 +1,10 @@
 import time
 
-from algo.heuristics import *
-from algo.kmeans_sp import *
-from algo.mlp_sp import *
+from algo.random import *
+from algo.kmeans import *
+from algo.mlp import *
 from algo.random_sp import *
-from algo.topk_sp import *
+from algo.topk import *
 from utils import *
 
 
@@ -16,7 +16,7 @@ def run_problem(problem, n, k):
 
 def run_with_parameters(problems, n, k):
     results = {}
-    # results['MIP'] = run_problem(problems['MIP'], n, k)
+    results['MIP'] = run_problem(problems['MIP'], n, k)
     results['Top-K'] = run_problem(problems['Top-K'], n, k)
 
     sum_a = 0
@@ -41,7 +41,7 @@ def run_with_parameters(problems, n, k):
 
 def run(data: DataUtils):
     problems = {}
-    # problems['MIP'] = MIPServerPlacer(data.base_stations, data.distances)
+    problems['MIP'] = MIPServerPlacer(data.base_stations, data.distances)
     problems['K-means'] = KMeansServerPlacer(data.base_stations, data.distances)
     problems['Top-K'] = TopKServerPlacer(data.base_stations, data.distances)
     problems['Random'] = RandomServerPlacer(data.base_stations, data.distances)

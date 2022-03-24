@@ -23,4 +23,3 @@ Edge server placement problem can be considered as a network. which is an undire
 | ---------------------- | ---------------------------------------------- | ----------- | ---- |
 | Yuanzhe Li et al.      | Profit-aware Edge Server Placement             | IoTJ        | 2021 |
 | Shangguang Wang et al. | Edge server placement in mobile edge computing | JPDS        | 2019 |
-|                        |                                                |             |      |
