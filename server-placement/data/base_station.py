@@ -6,7 +6,7 @@ class BaseStation:
         address: 名称 地址
         latitude: 纬度
         longitude: 经度
-        user_num: 用户数量
+        num_users: 用户数量
         workload: 总使用时间 单位分钟
     """
 
@@ -15,7 +15,7 @@ class BaseStation:
         self.address = addr
         self.latitude = lat
         self.longitude = lng
-        self.user_num = 0
+        self.num_users = 0
         self.workload = 0
 
     def __str__(self):

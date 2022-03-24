@@ -1,5 +1,4 @@
 import time
-from typing import Dict
 
 from algo.heuristics import *
 from algo.kmeans_sp import *
@@ -17,12 +16,12 @@ def run_problem(problem, n, k):
 
 def run_with_parameters(problems, n, k):
     results = {}
-    results['MIP'] = run_problem(problems['MIP'], n, k)
+    # results['MIP'] = run_problem(problems['MIP'], n, k)
     results['Top-K'] = run_problem(problems['Top-K'], n, k)
 
     sum_a = 0
     sum_b = 0
-    for t in range(10):
+    for t in range(1):
         res = run_problem(problems['K-means'], n, k)
         sum_a += res[0]
         sum_b += res[1]
@@ -31,7 +30,7 @@ def run_with_parameters(problems, n, k):
 
     sum_a = 0
     sum_b = 0
-    for t in range(10):
+    for t in range(1):
         res = run_problem(problems['Random'], n, k)
         sum_a += res[0]
         sum_b += res[1]
@@ -42,7 +41,7 @@ def run_with_parameters(problems, n, k):
 
 def run(data: DataUtils):
     problems = {}
-    problems['MIP'] = MIPServerPlacer(data.base_stations, data.distances)
+    # problems['MIP'] = MIPServerPlacer(data.base_stations, data.distances)
     problems['K-means'] = KMeansServerPlacer(data.base_stations, data.distances)
     problems['Top-K'] = TopKServerPlacer(data.base_stations, data.distances)
     problems['Random'] = RandomServerPlacer(data.base_stations, data.distances)
@@ -72,5 +71,5 @@ def run(data: DataUtils):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
-    data = DataUtils('dataset/base_stations_min.csv', 'data/data_min.csv')
+    data = DataUtils('./dataset/base_stations_min.csv', './dataset/data_min.csv')
     run(data)

@@ -2,6 +2,7 @@ import random
 import csv
 import logging
 import os
+import pandas as pd
 import pickle
 from datetime import datetime
 from functools import wraps
@@ -53,7 +54,7 @@ def memorize(filename):
 
 class DataUtils(object):
     def __init__(self, location_file, user_info_file):
-        self.base_station_locations = self.base_station_reader(location_file)
+        self.base_stations = self.base_station_reader(location_file)
         self.base_stations = self.user_info_reader(user_info_file)
         self.distances = self.distance_between_stations()
 
@@ -65,21 +66,12 @@ class DataUtils(object):
         :param path: csv文件路径, 基站按地址排序
         :return: List of BaseStations
         """
-        with open(path, 'r', ) as f:
-            reader = csv.reader(f)
-            base_stations = []
-            count = 0
-            for row in reader:
-                address = row[0]
-                latitude = float(row[1])
-                longitude = float(row[2])
-                base_stations.append(BaseStation(id=count, addr=address, lat=latitude, lng=longitude))
-                logging.debug(
-                    msg="(Base station:{0}:address={1}, latitude={2}, longitude={3})".format(count, address, latitude,
-                                                                                             longitude))
-                count += 1
-            f.close()
-            return base_stations
+        bs_data = pd.read_csv(path, header=0, index_col=0)
+        base_stations = []
+        for index, bs_info in bs_data.iterrows():
+            base_stations.append(BaseStation(id=index, addr=bs_info['address'], lat=bs_info['latitude'], lng=bs_info['longitude']))
+            logging.debug(msg=f"(Base station:{index}:address={bs_info['address']}, latitude={bs_info['latitude']}, longitude={bs_info['longitude']})")
+        return base_stations
 
     @memorize('cache/base_stations_with_user_info')
     def user_info_reader(self, path: str) -> List[BaseStation]:
@@ -89,50 +81,18 @@ class DataUtils(object):
         :param path: csv文件路径, 文件应按照基站地址排序
         :return: List of BaseStations with user info
         """
-        assert self.base_station_locations
-        with open(path, 'r') as f:
-            reader = csv.reader(f)
-            bs = self.base_station_locations
-            base_stations = []
-            count = 0
-            last_index = 0
-            last_station = None  # type: BaseStation
-            next(reader)  # 跳过标题
-            for row in reader:
-                address = row[4]
-                s_begin_time = row[2]
-                s_end_time = row[3]
-                logging.debug(
-                    msg="(User info::address={0}, begin_time={1}, end_time={2})".format(address, s_begin_time,
-                                                                                        s_end_time))
+        self.address_to_id = {bs.address: bs.id for bs in self.base_stations}
 
-                # 计算使用时间
-                try:
-                    begin_time = datetime.strptime(s_begin_time, r"%Y/%m/%d %H:%M")
-                    end_time = datetime.strptime(s_end_time, r"%Y/%m/%d %H:%M")
-                    minutes = (begin_time - end_time).seconds / 60
-                except ValueError as ve:
-                    logging.warning("Failed to convert time: " + str(ve))
-                    minutes = 0
-
-                if (not last_station) or (not address == last_station.address):
-                    last_station = None
-                    for i, item in enumerate(bs[last_index:]):
-                        if address == item.address:
-                            last_index = i
-                            last_station = item
-                            last_station.id = count
-                            count += 1
-                            base_stations.append(last_station)
-                            break
-                if last_station:
-                    last_station.user_num += 1
-                    last_station.workload += minutes
-            f.close()
-            DataUtils._shuffle(base_stations)
-            for i, item in enumerate(base_stations):
-                item.id = i
-            return base_stations
+        req_data = pd.read_csv(path, header=0, index_col=0)
+        req_data['start time'] = pd.to_datetime(req_data['start time'])
+        req_data['end time'] = pd.to_datetime(req_data['end time'])
+        for index, req_info in req_data.iterrows():
+            service_time = (req_info['end time'] - req_info['start time']).seconds / 60
+            bs_id = self.address_to_id[req_info['address']]
+            self.base_stations[bs_id].num_users += 1
+            self.base_stations[bs_id].workload += service_time
+            logging.debug(msg=f"(User info::address={req_info['address']}, begin_time={req_info['end time']}, end_time={req_info['start time']})")
+        return self.base_stations
 
     @staticmethod
     def _shuffle(l: List):

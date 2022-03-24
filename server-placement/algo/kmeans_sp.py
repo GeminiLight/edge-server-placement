@@ -35,4 +35,3 @@ class KMeansServerPlacer(ServerPlacer):
 
         self.edge_servers = list(filter(lambda x: x.workload != 0, edge_servers))
         logging.info("{0}:End running k-means".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-
