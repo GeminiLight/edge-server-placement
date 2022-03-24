@@ -5,13 +5,13 @@ from algo import *
 from utils import *
 
 
-def run_problem(problem: ServerPlacer, n, k):
+def run_problem(problem, n, k):
     assert hasattr(problem, "place_server")
     problem.place_server(n, k)
     return problem.objective_latency(), problem.objective_workload()
 
 
-def run_with_parameters(problems: Dict[str, ServerPlacer], n, k):
+def run_with_parameters(problems: Dict[str], n, k):
     results = {}
     results['MIP'] = run_problem(problems['MIP'], n, k)
     results['Top-K'] = run_problem(problems['Top-K'], n, k)
