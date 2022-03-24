@@ -7,17 +7,11 @@ from typing import List, Iterable
 import cplex
 import numpy as np
 import scipy.cluster.vq as vq
+from algo.server_placer import ServerPlacer
 
 from data.base_station import BaseStation
 from data.edge_server import EdgeServer
 from utils import DataUtils
-
-
-
-
-
-
-
 
 
 
