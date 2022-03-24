@@ -72,5 +72,5 @@ def run(data: DataUtils):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
-    data = DataUtils('data/基站经纬度.csv', 'data/上网信息输出表（日表）6月15号之后.csv')
+    data = DataUtils('dataset/base_stations_min.csv', 'data/data_min.csv')
     run(data)
