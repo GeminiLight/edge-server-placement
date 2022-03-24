@@ -66,7 +66,6 @@ def run(data: DataUtils):
             for key, value in results.items():
                 print(key, "平均距离(km)={0}, 负载标准差={1}".format(value[0], value[1]), file=file)
                 file.flush()
-
         file.close()
 
 
