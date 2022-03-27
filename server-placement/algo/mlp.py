@@ -1,6 +1,5 @@
-import logging
 import math
-import random
+import logging
 from datetime import datetime
 from typing import List, Iterable
 
@@ -11,8 +10,6 @@ import scipy.cluster.vq as vq
 
 from data.base_station import BaseStation
 from data.edge_server import EdgeServer
-from utils import DataUtils
-
 from .server_placer import ServerPlacer
 
 

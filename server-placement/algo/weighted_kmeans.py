@@ -1,17 +1,14 @@
 import logging
-from datetime import datetime
-from typing import List, Iterable
-
 import numpy as np
-import scipy.cluster.vq as vq
 from sklearn.cluster import KMeans
+from datetime import datetime
 
 from data.edge_server import EdgeServer
 
 from .server_placer import ServerPlacer
 
 
-class KMeansServerPlacer(ServerPlacer):
+class WeightedKMeansServerPlacer(ServerPlacer):
     """
     K-means approach
     """
@@ -22,11 +19,12 @@ class KMeansServerPlacer(ServerPlacer):
         # init data as ndarray
         base_stations = self.base_stations[:base_station_num]
         coordinates = list(map(lambda x: (x.latitude, x.longitude), base_stations))
+        workload_weights = np.array(list(map(lambda x: (x.workload), base_stations)))
         data = np.array(coordinates)
         k = edge_server_num
 
         # k-means
-        kmeans = KMeans(n_clusters=k, random_state=0, max_iter=100).fit(data)
+        kmeans = KMeans(n_clusters=k, random_state=0, max_iter=100).fit(data, sample_weight=workload_weights)
         centroid = kmeans.cluster_centers_
         label = kmeans.labels_
 
