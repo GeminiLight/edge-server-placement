@@ -17,6 +17,10 @@ Edge server placement problem can be considered as a network. which is an undire
   - The links between base stations and mobile users
   - The links between base stations
 
+## Dataset
+
+The default dataset is the preprocessed and simplified version of [The Telecom Dataset](http://sguangwang.com/TelecomDataset.html), provided by Shanghai Telecom, and you can expand the dataset size by downloading all data from [there](http://sguangwang.com/TelecomDataset.html).
+
 ## Reference
 
 | Author                 | Paper                                          | Publication | Year |
