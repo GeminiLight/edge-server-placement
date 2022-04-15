@@ -14,7 +14,7 @@ class TopKServerPlacer(ServerPlacer):
     """
     Top-K approach
     """
-
+    name = 'TopK'
     def place_server(self, base_station_num, edge_server_num):
         logging.info("{0}:Start running Top-k with N={1}, K={2}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                                                                         base_station_num, edge_server_num))

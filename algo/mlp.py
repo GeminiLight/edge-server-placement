@@ -17,7 +17,7 @@ class MIPServerPlacer(ServerPlacer):
     """
     MIP approach
     """
-
+    name = 'MIP'
     def __init__(self, base_stations: List[BaseStation], distances: List[List[float]]):
         super().__init__(base_stations, distances)
         self.n = 0
@@ -61,19 +61,19 @@ class MIPServerPlacer(ServerPlacer):
 
     def preprocess_problem(self):
         base_stations = self.base_stations[:self.n]
-        # 每个基站，找出距离它最近的N/K个基站
+        # For each base station, find the closest N/K base stations
         d = np.array([row[:self.n] for row in self.distances[:self.n]])
         cap = int(len(base_stations) / self.k)
         assign = []
-        max_distances = []  # 距离
+        # distance
+        max_distances = []
         for i, row in enumerate(d):
             indices = row.argpartition(cap)[:cap]
             assign.append(indices)
             t = row[indices]
             max_distances.append(row[indices].max())
             logging.debug("Found nearest {0} base stations of base station {1}".format(cap, i))
-
-        # 负载
+        # workload
         avg_workload = sum((item.workload for item in base_stations)) / self.k
         workload_diff = []
         for row in assign:
@@ -82,11 +82,13 @@ class MIPServerPlacer(ServerPlacer):
             expr = math.pow(workload - avg_workload, 2)
             workload_diff.append(expr)
 
-        # 归一化
+        # normalization
         normalized_max_distances = MIPServerPlacer._normalize(max_distances)
         normalized_workload_diff = MIPServerPlacer._normalize(workload_diff)
 
-        belongs = [[] for i in range(self.n)]  # belongs: 表示一个基站要被照顾到，可以在那些地方部署边缘服务器
+        
+        # belongs: find the neighbors of base staion to place edge servers so that each base staions can be considerd
+        belongs = [[] for i in range(self.n)]  
         for i, row in enumerate(assign):
             for bs in row:
                 belongs[bs].append(i)
@@ -126,7 +128,7 @@ class MIPServerPlacer(ServerPlacer):
         c.linear_constraints.add(lin_expr=[cplex.SparsePair(placement_vars, [1 for i in range(self.n)])],
                                  senses=['E'], rhs=[self.k])
 
-        # constraint: assigned 表示是否为基站分配了边缘服务器
+        # constraint: whether a base staion has been assigned to a edge server
         # assigned[i] >= all place[j] for j in belongs[i]
         for bsid, esids in enumerate(self.belongs):
             varnames = []
@@ -143,7 +145,7 @@ class MIPServerPlacer(ServerPlacer):
             c.linear_constraints.add(lin_expr=[cplex.SparsePair(varnames, coefficients)],
                                      senses=['G'], rhs=[0])
 
-        # constraint: 被分配了边缘服务器的基站的总数
+        # constraint:  the total number of edge server that has been assigned
         acceptable = int(self.n * 0.9)
         c.linear_constraints.add(lin_expr=[cplex.SparsePair(assigned_vars, [1 for i in range(self.n)])],
                                  senses=['G'], rhs=[acceptable])

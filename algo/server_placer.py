@@ -32,9 +32,16 @@ class ServerPlacer(object):
         return DataUtils.calc_distance(edge_server.latitude, edge_server.longitude, base_station.latitude,
                                        base_station.longitude)
 
+    def compute_objectives(self):
+        objectives = {
+            'latency': self.objective_latency(), 
+            'workload': self.objective_workload()
+        }
+        return objectives
+
     def objective_latency(self):
         """
-        Calculate average edge server access delay
+        Calculate average edge server access delay (Average distance(km))
         """
         assert self.edge_servers
         total_delay = 0
@@ -49,7 +56,7 @@ class ServerPlacer(object):
 
     def objective_workload(self):
         """
-        Calculate average edge server workload
+        Calculate average edge server workload (Load standard deviation)
         
         Max worklaod of edge server - Min workload
         """

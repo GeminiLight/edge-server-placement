@@ -12,7 +12,7 @@ class MIQPServerPlacer(ServerPlacer):
     """
     MIQP base heuristic
     """
-
+    name = 'MIQP'
     def __init__(self, base_stations, distances):
         super().__init__(base_stations, distances)
         self.n = 0

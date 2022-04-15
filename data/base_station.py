@@ -2,12 +2,12 @@ class BaseStation:
     """基站
     
     Attributes:
-        id: 编号
-        address: 名称 地址
-        latitude: 纬度
-        longitude: 经度
-        num_users: 用户数量
-        workload: 总使用时间 单位分钟
+        id: 
+        address: latitude-longitude
+        latitude: 
+        longitude: 
+        num_users: 
+        workload: the total used time (min)
     """
 
     def __init__(self, id, addr, lat, lng):

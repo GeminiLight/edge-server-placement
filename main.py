@@ -1,5 +1,7 @@
 import time
 
+from sklearn.utils import resample
+
 from algo.random import *
 from algo.kmeans import *
 from algo.mlp import *
@@ -9,53 +11,38 @@ from algo.topk import *
 from utils import *
 
 
-def run_problem(problem, n, k):
-    
-    return 
-
-
-def run_with_parameters(placer, n, k, repeat_times=1):
+def run_with_settings(placer, n, k, repeat_times=1):
     if repeat_times == 1:
         placer.place_server(n, k)
-        res = placer.objective_latency(), placer.objective_workload()
+        objectives = placer.compute_objectives()
     else:
-        sum_a = 0
-        sum_b = 0
+        # run multiple times to obtain the mean value
+        objectives_list = []
         for t in range(repeat_times):
             placer.place_server(n, k)
-            res = placer.objective_latency(), placer.objective_workload()
-            sum_a += res[0]
-            sum_b += res[1]
+            one_objectives = placer.compute_objectives()
             time.sleep(1)
-        res = (sum_a / 10, sum_b / 10,)
-    return res
+            objectives_list.append(one_objectives)
+
+        objectives = {}
+        for k in objectives_list[-1].keys():
+            mean_value = sum(o[k] for o in objectives_list) / len(objectives_list)
+            objectives[k] = mean_value
+    return objectives
 
 
-def run(placers):
-    with open('results/results.txt', 'w') as file:
-        # 第一个图
-        # for n in range(300, 3300, 300):
-        #     k = int(n / 10)
-        #     print("N={0}, K={1}".format(n, k), file=file)
-        #     results = run_with_parameters(problems, n, k)
-        #     for key, value in results.items():
-        #         print(key, "平均距离(km)={0}, 负载标准差={1}".format(value[0], value[1]), file=file)
-        #         file.flush()
-        #
-        # print("======================================================", file=file)
-
-        # 第二个图
-        n = 3000
-        for k in range(100, 600, 100):
-            print("N={0}, K={1}".format(n, k), file=file)
-            results = {}
-            for name, placer in placers.items():
-                result = run_with_parameters(placer, n, k)
-                results[name] = result
-            for key, value in results.items():
-                print(key, "平均距离(km)={0}, 负载标准差={1}".format(value[0], value[1]), file=file)
-                file.flush()
-        file.close()
+def run(placers, results_fpath='results/results.csv'):
+    n = 3000
+    records = []
+    for k in range(100, 600, 100):
+        print(f'\nSettings: N={n}, K={k}')
+        for name, placer in placers.items():
+            settings = {'num_base_stations': n, 'num_edge_servers': k, 'placer_name': name}
+            objectives = run_with_settings(placer, n, k)
+            record = {**settings, **objectives}
+            records.append(record)
+    pd_records = pd.DataFrame(records)
+    pd_records.to_csv(results_fpath)
 
 
 if __name__ == '__main__':

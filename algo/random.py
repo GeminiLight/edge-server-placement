@@ -11,7 +11,7 @@ class RandomServerPlacer(ServerPlacer):
     """
     Random approach
     """
-
+    name = 'Random'
     def place_server(self, base_station_num, edge_server_num):
         base_stations = self.base_stations[:base_station_num]
         logging.info("{0}:Start running Random with N={1}, K={2}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'),

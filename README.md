@@ -1,12 +1,10 @@
 # Edge Server Placement
 
-## Problem Formulatiom
-
-### Mobile Edge Environment
+## Problem Introduction
 
 ![](resources/example-mec.png)
 
-Edge server placement problem can be considered as a network. which is an undirected graph $G = (V, E)$, where
+Edge server placement problem in Mobile Edge Environment can be considered as an undirected network $G = (V, E)$, where
 
 - $V = B \cup S$
   - $B$: the set of **Base stations**
@@ -14,12 +12,21 @@ Edge server placement problem can be considered as a network. which is an undire
 
 - $E$
   - **The links between base stations and edge servers**
-  - The links between base stations and mobile users
-  - The links between base stations
+  - The links between base stations and mobile users (Not considered)
+  - The links between base stations (Not considered)
 
 ## Dataset
 
 The default dataset is the preprocessed and simplified version of [The Telecom Dataset](http://sguangwang.com/TelecomDataset.html), provided by Shanghai Telecom, and you can expand the dataset size by downloading all data from [there](http://sguangwang.com/TelecomDataset.html).
+
+
+## Algorithms
+
+- Random
+- TopK
+- KMeans & Weighted KMeans
+- MIP [Shangguang Wang et al., 2019]
+- MIQP [Yuanzhe Li et al., 2021]
 
 ## Reference
 
